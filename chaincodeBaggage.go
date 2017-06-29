@@ -36,7 +36,15 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface, function string
 	return nil, nil
 }
 
-// Transaction manage the baggages info
+/*
+*	Transaction manage the baggages info. 
+*	Function permitted
+*	- addBaggage : add a baggage to blockchain
+*	- addBaggagePosition : add the last position of the baggage
+*	- airLandedEvent : update the baggage information adding the client air landing event
+*	- baggageDeliveredEvent : update the baggage information adding the baggage air landing event
+*	- updateRefundCondition : check if the airline must refund the client because the baggage is in delay. NB: Use function getRefundCondition to check the condition.
+*/	
 func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 
 	var bag Baggage
@@ -84,7 +92,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 		return jsonAsBytes, nil
 	}
-
+	
 	if function == "addBaggagePosition" {
 		if len(args) != 7 {
 			return nil, errors.New("Incorrect number of arguments. Expecting 7")
@@ -126,6 +134,7 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 		return jsonAsBytes, nil  
 	}
 	
+	//Use this function to update the baggage information adding the client air landing event
 	if function == "airLandedEvent" {
 		if len(args) != 1 {
 			return nil, errors.New("Incorrect number of arguments. Expecting Id")
@@ -225,8 +234,13 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface, function stri
 
 }
 
-
-// Query callback representing the query of a chaincode
+/*
+*	Query callback representing the query of a chaincode
+*	Function permitted
+*	- getBaggageInfo : get the baggage information from blockchain
+*	- getBaggageLastPosition : get the last position of the baggage from blockchain
+*	- getRefundCondition : Ucheck if the airline must refund the client because the baggage is in delay. If flag refundCondition is true, the client must be refunded by airline
+*/	
 func (t *SimpleChaincode) Query(stub shim.ChaincodeStubInterface, function string, args []string) ([]byte, error) {
 	if len(args) != 1 {
 		return nil, errors.New("Incorrect number of arguments. Expecting the baggageId to query")
